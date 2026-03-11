@@ -17,9 +17,10 @@ const PERSON_PROMPTS: Record<StyleOption, string> = {
 
 interface ImageStudioProps {
   apiKey: string;
+  onClearKey: () => void;
 }
 
-export function ImageStudio({ apiKey }: ImageStudioProps) {
+export function ImageStudio({ apiKey, onClearKey }: ImageStudioProps) {
   const [prompt, setPrompt] = useState('');
   const [style, setStyle] = useState<StyleOption>('health-letter');
   const [includePerson, setIncludePerson] = useState(false);
@@ -140,6 +141,15 @@ export function ImageStudio({ apiKey }: ImageStudioProps) {
             </div>
             <h1 className="text-xl font-semibold tracking-tight">O-Care Image Studio</h1>
           </div>
+          <button 
+            onClick={() => {
+              localStorage.removeItem('OCARE_GEMINI_API_KEY');
+              onClearKey();
+            }}
+            className="text-sm font-medium text-neutral-500 hover:text-neutral-700 transition-colors px-3 py-1.5 rounded-lg hover:bg-neutral-100"
+          >
+            API 키 변경
+          </button>
         </div>
       </header>
 

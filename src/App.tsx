@@ -14,5 +14,5 @@ export default function App() {
     return <ApiKeySelector onKeySelected={(key) => setApiKey(key)} />;
   }
 
-  return <ImageStudio apiKey={apiKey} />;
+  return <ImageStudio apiKey={apiKey} onClearKey={() => setApiKey('')} />;
 }

@@ -10,13 +10,7 @@ export function ApiKeySelector({ onKeySelected }: ApiKeySelectorProps) {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    // 1. Check if it's baked into the environment (Vercel deployment)
-    if (process.env.GEMINI_API_KEY) {
-      onKeySelected(process.env.GEMINI_API_KEY);
-      return;
-    }
-    
-    // 2. Check if the user previously saved it in this browser
+    // Check if the user previously saved it in this browser
     const savedKey = localStorage.getItem('OCARE_GEMINI_API_KEY');
     if (savedKey) {
       onKeySelected(savedKey);
