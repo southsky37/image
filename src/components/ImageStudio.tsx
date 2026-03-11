@@ -96,12 +96,8 @@ export function ImageStudio() {
     } catch (err: any) {
       console.error('Generation error:', err);
       
-      // Handle "Requested entity was not found" error
-      if (err?.message?.includes('Requested entity was not found')) {
-        setError('API 키 세션이 만료되었거나 유효하지 않습니다. 페이지를 새로고침하여 다시 선택해주세요.');
-      } else {
-        setError('이미지 생성에 실패했습니다. 다시 시도해 주세요.');
-      }
+      const errorMsg = err?.message || JSON.stringify(err);
+      setError(`이미지 생성 실패: ${errorMsg}`);
     } finally {
       setIsGenerating(false);
     }
@@ -157,23 +153,21 @@ export function ImageStudio() {
                 className="w-40 sm:w-64 pl-9 pr-3 py-1.5 text-sm rounded-xl border border-neutral-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent font-mono transition-all"
               />
             </div>
-            <button
-               onClick={async () => {
-                 try {
-                   if (window.aistudio) {
+            {typeof window !== 'undefined' && window.aistudio && (
+              <button
+                 onClick={async () => {
+                   try {
                      await window.aistudio.openSelectKey();
-                   } else {
-                     alert("AI Studio 환경이 아닙니다.");
+                   } catch (e) {
+                     console.error(e);
                    }
-                 } catch (e) {
-                   console.error(e);
-                 }
-               }}
-               className="text-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-700 px-3 py-1.5 rounded-lg border border-emerald-200 font-medium transition-colors hidden sm:block whitespace-nowrap"
-               title="Google AI Studio 연동"
-            >
-               Studio Key
-            </button>
+                 }}
+                 className="text-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-700 px-3 py-1.5 rounded-lg border border-emerald-200 font-medium transition-colors hidden sm:block whitespace-nowrap"
+                 title="Google AI Studio 연동"
+              >
+                 Studio 연동 키 불러오기
+              </button>
+            )}
           </div>
         </div>
       </header>
