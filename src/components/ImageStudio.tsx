@@ -15,7 +15,11 @@ const PERSON_PROMPTS: Record<StyleOption, string> = {
   'ocare-character': 'Human character, expressive cute face, warm smile, friendly human features.'
 };
 
-export function ImageStudio() {
+interface ImageStudioProps {
+  apiKey: string;
+}
+
+export function ImageStudio({ apiKey }: ImageStudioProps) {
   const [prompt, setPrompt] = useState('');
   const [style, setStyle] = useState<StyleOption>('health-letter');
   const [includePerson, setIncludePerson] = useState(false);
@@ -36,7 +40,7 @@ export function ImageStudio() {
     setResultSvg(null);
 
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+      const ai = new GoogleGenAI({ apiKey: apiKey });
       
       // Translate prompt to English
       let translatedPrompt = prompt;

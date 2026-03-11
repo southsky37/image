@@ -8,11 +8,11 @@ import { ImageStudio } from './components/ImageStudio';
 import { ApiKeySelector } from './components/ApiKeySelector';
 
 export default function App() {
-  const [apiKeySelected, setApiKeySelected] = useState(false);
+  const [apiKey, setApiKey] = useState<string>('');
 
-  if (!apiKeySelected) {
-    return <ApiKeySelector onKeySelected={() => setApiKeySelected(true)} />;
+  if (!apiKey) {
+    return <ApiKeySelector onKeySelected={(key) => setApiKey(key)} />;
   }
 
-  return <ImageStudio />;
+  return <ImageStudio apiKey={apiKey} />;
 }
