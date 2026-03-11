@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { GoogleGenAI } from '@google/genai';
-import { Download, Image as ImageIcon, Loader2, Sparkles, AlertCircle, FileImage, FileCode2, User } from 'lucide-react';
+import { Download, Image as ImageIcon, Loader2, Sparkles, AlertCircle, FileImage, FileCode2, User, KeyRound } from 'lucide-react';
 import { convertImageToSVG } from '../utils/imageTracer';
 
 type StyleOption = 'health-letter' | 'ocare-character';
@@ -23,11 +23,17 @@ export function ImageStudio() {
   const [resultImage, setResultImage] = useState<string | null>(null);
   const [resultSvg, setResultSvg] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [apiKey, setApiKey] = useState(() => localStorage.getItem('OCARE_GEMINI_API_KEY') || '');
 
   const handleGenerate = async () => {
     if (!prompt.trim()) {
       setError('어떤 이미지가 필요하신가요? 프롬프트를 입력해주세요.');
       return;
+    }
+
+    let finalKey = apiKey.trim();
+    if (!finalKey && process.env.GEMINI_API_KEY) {
+      finalKey = process.env.GEMINI_API_KEY;
     }
 
     setError(null);
@@ -36,7 +42,7 @@ export function ImageStudio() {
     setResultSvg(null);
 
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+      const ai = new GoogleGenAI({ apiKey: finalKey || 'empty_key' });
       
       // Translate prompt to English
       let translatedPrompt = prompt;
@@ -130,10 +136,44 @@ export function ImageStudio() {
       <header className="bg-white border-b border-neutral-200 sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center text-white">
+            <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center text-white shrink-0">
               <Sparkles size={18} />
             </div>
-            <h1 className="text-xl font-semibold tracking-tight">O-Care Image Studio</h1>
+            <h1 className="text-xl font-semibold tracking-tight hidden sm:block">O-Care Image Studio</h1>
+            <h1 className="text-lg font-semibold tracking-tight sm:hidden">O-Care</h1>
+          </div>
+          
+          <div className="flex items-center gap-3">
+            <div className="relative flex items-center">
+              <KeyRound size={16} className="absolute left-3 text-neutral-400" />
+              <input
+                type="password"
+                placeholder="API Key 입력 (AIzaSy...)"
+                value={apiKey}
+                onChange={(e) => {
+                  setApiKey(e.target.value);
+                  localStorage.setItem('OCARE_GEMINI_API_KEY', e.target.value);
+                }}
+                className="w-40 sm:w-64 pl-9 pr-3 py-1.5 text-sm rounded-xl border border-neutral-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent font-mono transition-all"
+              />
+            </div>
+            <button
+               onClick={async () => {
+                 try {
+                   if (window.aistudio) {
+                     await window.aistudio.openSelectKey();
+                   } else {
+                     alert("AI Studio 환경이 아닙니다.");
+                   }
+                 } catch (e) {
+                   console.error(e);
+                 }
+               }}
+               className="text-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-700 px-3 py-1.5 rounded-lg border border-emerald-200 font-medium transition-colors hidden sm:block whitespace-nowrap"
+               title="Google AI Studio 연동"
+            >
+               Studio Key
+            </button>
           </div>
         </div>
       </header>
