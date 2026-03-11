@@ -98,7 +98,8 @@ export function ImageStudio({ apiKey }: ImageStudioProps) {
       if (err?.message?.includes('Requested entity was not found')) {
         setError('API 키 세션이 만료되었거나 유효하지 않습니다. 페이지를 새로고침하여 다시 선택해주세요.');
       } else {
-        setError('이미지 생성에 실패했습니다. 다시 시도해 주세요.');
+        // Log the exact error to the screen so we can see why it fails
+        setError(`이미지 생성 실패: ${err?.message || String(err)}`);
       }
     } finally {
       setIsGenerating(false);
