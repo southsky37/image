@@ -15,12 +15,7 @@ const PERSON_PROMPTS: Record<StyleOption, string> = {
   'ocare-character': 'Human character, expressive cute face, warm smile, friendly human features.'
 };
 
-interface ImageStudioProps {
-  apiKey: string;
-  onClearKey: () => void;
-}
-
-export function ImageStudio({ apiKey, onClearKey }: ImageStudioProps) {
+export function ImageStudio() {
   const [prompt, setPrompt] = useState('');
   const [style, setStyle] = useState<StyleOption>('health-letter');
   const [includePerson, setIncludePerson] = useState(false);
@@ -41,7 +36,7 @@ export function ImageStudio({ apiKey, onClearKey }: ImageStudioProps) {
     setResultSvg(null);
 
     try {
-      const ai = new GoogleGenAI({ apiKey: apiKey });
+      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
       
       // Translate prompt to English
       let translatedPrompt = prompt;
@@ -99,8 +94,7 @@ export function ImageStudio({ apiKey, onClearKey }: ImageStudioProps) {
       if (err?.message?.includes('Requested entity was not found')) {
         setError('API 키 세션이 만료되었거나 유효하지 않습니다. 페이지를 새로고침하여 다시 선택해주세요.');
       } else {
-        // Log the exact error to the screen so we can see why it fails
-        setError(`이미지 생성 실패: ${err?.message || String(err)}`);
+        setError('이미지 생성에 실패했습니다. 다시 시도해 주세요.');
       }
     } finally {
       setIsGenerating(false);
@@ -141,15 +135,6 @@ export function ImageStudio({ apiKey, onClearKey }: ImageStudioProps) {
             </div>
             <h1 className="text-xl font-semibold tracking-tight">O-Care Image Studio</h1>
           </div>
-          <button 
-            onClick={() => {
-              localStorage.removeItem('OCARE_GEMINI_API_KEY');
-              onClearKey();
-            }}
-            className="text-sm font-medium text-neutral-500 hover:text-neutral-700 transition-colors px-3 py-1.5 rounded-lg hover:bg-neutral-100"
-          >
-            API 키 변경
-          </button>
         </div>
       </header>
 
